@@ -229,3 +229,69 @@ uvx <tool> <args>        # shortcut for uv tool run
 ## 14) When to stick with `uv pip`
 
 If you’re converting slowly or working in an environment tightly coupled to old tooling, `uv pip` lets you keep familiar pip commands while UV manages environments; but migrating to `uv add`/`uv sync` gives full reproducibility and speed gains.
+
+---
+
+## **💡 Dev Note: Resetting a Broken UV Environment / Kernel**
+
+**Problem:**
+
+* UV environment not working, kernel not initializing, `main.py` fails.
+
+**Quick Fix Steps:**
+
+1. **Delete the broken environment**
+
+```bash
+cd /path/to/project
+rm -rf .venv
+```
+
+2. **Rebuild environment with UV**
+
+```bash
+uv sync
+```
+
+* Recreates `.venv` and installs all dependencies from `uv.lock` / `pyproject.toml`.
+
+3. **Add missing dependencies (if needed)**
+
+```bash
+uv add <package_name>
+```
+
+* Updates both `pyproject.toml` and `uv.lock`.
+
+4. **Run your script using UV**
+
+```bash
+uv run main.py
+```
+
+* Automatically uses the new `.venv`.
+
+5. **Connect Jupyter notebook to the UV environment**
+
+```bash
+uv run python -m ipykernel install --user --name coffee-uv --display-name "Python (coffee-UV)"
+```
+
+* Select **Kernel → Python** in your notebook.
+
+6. **Verify environment**
+
+```bash
+uv run python --version
+uv run which python
+```
+
+* Confirms `.venv` is being used.
+
+---
+
+**Tip:**
+
+* **Do not delete `pyproject.toml` or `uv.lock`** — these files define your project environment.
+* Use `uv run <script>` instead of activating `.venv` manually; UV handles the environment automatically.
+
